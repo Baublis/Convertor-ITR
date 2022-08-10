@@ -1,0 +1,74 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>ITR.ico</ApplicationIcon>
+    <Win32Resource />
+    <Authors>Баублис Д.В.</Authors>
+    <Company>ITR</Company>
+    <UserSecretsId>d19260d3-a4de-437d-b99f-69325d0e5271</UserSecretsId>
+    <StartupObject></StartupObject>
+    <AssemblyVersion>2022.07.26.1</AssemblyVersion>
+    <FileVersion>2022.07.26.1</FileVersion>
+    <UseWPF>True</UseWPF>
+    <SignAssembly>false</SignAssembly>
+    <Copyright>Баублис Д.В.</Copyright>
+    <PackageReleaseNotes>Для запуска необходим пакет windowsdesktop-runtime-5.0.13-win-x64</PackageReleaseNotes>
+    <Description>Программа «Convertor ITR» предназначена для конвертации ПО под новые платформы из ПО, написанного в конфигураторе АСУ ТП «ACS Configurator».</Description>
+    <Product>CITR</Product>
+    <PackageId>CITR</PackageId>
+    <AssemblyName>Convertor ITR</AssemblyName>
+    <Version>$(VersionPrefix)</Version>
+    <IsPublishable>True</IsPublishable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Prefer32Bit>true</Prefer32Bit>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <DocumentationFile></DocumentationFile>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="ITR.ico" />
+    <None Remove="Resources\Microsoft.Office.Interop.Excel.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Excel">
+      <HintPath>Resources\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>
