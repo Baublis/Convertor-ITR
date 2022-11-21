@@ -23,6 +23,11 @@ namespace CITR
         {
             this.Text = "Convertor ITR " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
+            Microsoft.Win32.RegistryKey currentUserKey = Microsoft.Win32.Registry.CurrentUser;
+            Microsoft.Win32.RegistryKey helloKey = currentUserKey.CreateSubKey("CITR");
+            if (helloKey.GetValue(textBox_lines.Name) != null)
+                textBox_lines.Text = helloKey.GetValue(textBox_lines.Name).ToString();
+
             // Создаем всплывающую подсказку и связываем ее с контейнером формы.
             ToolTip toolTip1 = new ToolTip();
 
@@ -563,6 +568,8 @@ namespace CITR
                                     int max_lines = Convert.ToInt32(textBox_lines.Text);
                                     if (b > max_lines && checkBox_textparting.Checked && end_if)
                                     {
+                                        b++;
+                                        output_IEC.Write(arr_buf[j]);
                                         string probf = arr_buf[j];
                                         b = 0;
                                         N++;
@@ -570,7 +577,7 @@ namespace CITR
                                         output_IEC.Close();
                                         file_IEC = File.Open(new_path_IEC, FileMode.Create);
                                         output_IEC = new StreamWriter(file_IEC);
-                                        output_IEC.Write(arr_buf[j]);
+                                        //output_IEC.Write(arr_buf[j]);
                                     }
                                     else if (arr_buf[j] != "\r" && arr_buf[j] != "\t\r")
                                     {
@@ -771,7 +778,6 @@ namespace CITR
                 progressBar1.Visible = false;
             }
         }
-
-        
+ 
     }
 }

@@ -200,6 +200,7 @@
             // 
             this.checkBox_MB_OS.Checked = true;
             this.checkBox_MB_OS.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_MB_OS.Enabled = false;
             this.checkBox_MB_OS.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.checkBox_MB_OS.Location = new System.Drawing.Point(263, 331);
             this.checkBox_MB_OS.Margin = new System.Windows.Forms.Padding(2);
@@ -421,6 +422,7 @@
             // 
             this.checkBox_MBS_RTU_2.Checked = true;
             this.checkBox_MBS_RTU_2.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_MBS_RTU_2.Enabled = false;
             this.checkBox_MBS_RTU_2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.checkBox_MBS_RTU_2.Location = new System.Drawing.Point(263, 367);
             this.checkBox_MBS_RTU_2.Margin = new System.Windows.Forms.Padding(2);

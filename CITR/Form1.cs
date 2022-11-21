@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ namespace CITR
 {
     public partial class Form1 : Form
     {
+        bool one_select_astra = true;
+        bool one_select_epsilon = true;
         public Form1()
         {
             InitializeComponent();
@@ -26,11 +29,34 @@ namespace CITR
             if (helloKey.GetValue(groupBox2.Name) != null)
                 groupBox2.Text = helloKey.GetValue(groupBox2.Name).ToString();
             if (helloKey.GetValue(radioButton_epsilon.Name) != null)
+            {
                 radioButton_epsilon.Checked = Convert.ToBoolean(helloKey.GetValue(radioButton_epsilon.Name).ToString());
+                if (radioButton_epsilon.Checked)
+                    one_select_epsilon = false;
+            }                 
             if (helloKey.GetValue(radioButton_astra.Name) != null)
+            {
                 radioButton_astra.Checked = Convert.ToBoolean(helloKey.GetValue(radioButton_astra.Name).ToString());
+                if (radioButton_astra.Checked)
+                    one_select_astra = false;
+            }
+            if (helloKey.GetValue(textBox_CMD_1.Name) != null)
+            {
+                //textBox_CMD_1.Text = helloKey.GetValue(textBox_CMD_1.Name).ToString();
+            }
+            if (helloKey.GetValue(textBox_CMD_2.Name) != null)
+            {
+                //textBox_CMD_2.Text = helloKey.GetValue(textBox_CMD_2.Name).ToString();
+            }
             helloKey.Close();
-
+            if (radioButton_astra.Checked)
+            {
+                groupBox_CMD.Text = "Время блокировки команды, мс";
+            }
+            else
+            {
+                groupBox_CMD.Text = "Время блокировки команды, с";
+            }
             this.Text = "Convertor ITR " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
             checkBox_MBS_RTU_2.Enabled = checkBox_MBS_RTU_1.Checked;
             checkBox_ARDEV.Enabled = checkBox_MBTCP.Checked;
@@ -75,25 +101,35 @@ namespace CITR
         }
         private void select_Epsilon             (object sender, EventArgs e)
         {
-            Microsoft.Win32.RegistryKey currentUserKey = Microsoft.Win32.Registry.CurrentUser;
-            Microsoft.Win32.RegistryKey helloKey = currentUserKey.CreateSubKey("CITR");
-            helloKey.SetValue("groupBox2", "Epsilon LD");
-            groupBox2.Text = "Epsilon LD";
-            helloKey.Close();
-            groupBox_CMD.Text = "Время блокировки команды, с";
-            textBox_CMD_1.Text = (Convert.ToInt32(textBox_CMD_1.Text) / 1000).ToString();
-            textBox_CMD_2.Text = (Convert.ToInt32(textBox_CMD_2.Text) / 1000).ToString();
+            if (one_select_epsilon)
+            {
+                Microsoft.Win32.RegistryKey currentUserKey = Microsoft.Win32.Registry.CurrentUser;
+                Microsoft.Win32.RegistryKey helloKey = currentUserKey.CreateSubKey("CITR");
+                helloKey.SetValue("groupBox2", "Epsilon LD");
+                groupBox2.Text = "Epsilon LD";
+                helloKey.Close();
+                groupBox_CMD.Text = "Время блокировки команды, с";
+                //textBox_CMD_1.Text = (Convert.ToInt32(textBox_CMD_1.Text) / 1000).ToString();
+                //textBox_CMD_2.Text = (Convert.ToInt32(textBox_CMD_2.Text) / 1000).ToString();
+            }
+            one_select_astra = true;
+            one_select_epsilon = false;
         }
         private void select_Astra               (object sender, EventArgs e)
         {
-            Microsoft.Win32.RegistryKey currentUserKey = Microsoft.Win32.Registry.CurrentUser;
-            Microsoft.Win32.RegistryKey helloKey = currentUserKey.CreateSubKey("CITR");
-            helloKey.SetValue("groupBox2", "Astra IDE");
-            groupBox2.Text = "Astra IDE";
-            helloKey.Close();
-            groupBox_CMD.Text = "Время блокировки команды, мс";
-            textBox_CMD_1.Text = (Convert.ToInt32(textBox_CMD_1.Text) * 1000).ToString();
-            textBox_CMD_2.Text = (Convert.ToInt32(textBox_CMD_2.Text) * 1000).ToString();
+            if (one_select_astra)
+            {
+                Microsoft.Win32.RegistryKey currentUserKey = Microsoft.Win32.Registry.CurrentUser;
+                Microsoft.Win32.RegistryKey helloKey = currentUserKey.CreateSubKey("CITR");
+                helloKey.SetValue("groupBox2", "Astra IDE");
+                groupBox2.Text = "Astra IDE";
+                helloKey.Close();
+                groupBox_CMD.Text = "Время блокировки команды, мс";
+                //textBox_CMD_1.Text = (Convert.ToInt32(textBox_CMD_1.Text) * 1000).ToString();
+                //textBox_CMD_2.Text = (Convert.ToInt32(textBox_CMD_2.Text) * 1000).ToString();
+            }
+            one_select_astra = false;
+            one_select_epsilon = true;
         }
         private void selection_Form             (object sender, EventArgs e)
         {
@@ -115,7 +151,15 @@ namespace CITR
         private void textBox_CMD_KeyPress       (object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar != 8 && (e.KeyChar < 48 || e.KeyChar > 57))
+            {
                 e.Handled = true;
+                Microsoft.Win32.RegistryKey currentUserKey = Microsoft.Win32.Registry.CurrentUser;
+                Microsoft.Win32.RegistryKey helloKey = currentUserKey.CreateSubKey("CITR");
+                TextBox textbox = (TextBox)sender;
+                helloKey.SetValue(textbox.Name, textbox.Text);
+                helloKey.Close();
+            }
+                
         }
         private void textBox_version_KeyPress   (object sender, KeyPressEventArgs e)
         {
@@ -193,18 +237,20 @@ namespace CITR
             //Process.Start(filePath);
         }
 
-        XmlDocument GVL                 =       new XmlDocument();
-        XmlDocument XML                 =       new XmlDocument();
-        XmlDocument Application_IN      =       new XmlDocument();
-        XmlDocument APR                 =       new XmlDocument();
-        XmlDocument APR_Corrected       =       new XmlDocument();
-        XmlDocument REGUL_ModBus_TCP    =       new XmlDocument();
-        XmlDocument REGUL_IEC_DATA      =       new XmlDocument();
-        XmlDocument REGUL_IEC_CMD       =       new XmlDocument();
-        ArrayList   trig_list           =       new ArrayList();
-        string      path;
-        string      short_name_application;
-        string      short_name_apr;
+        FileStream      file_descr;
+        StreamWriter    output_file_descr;
+        XmlDocument     GVL                 =       new XmlDocument();
+        XmlDocument     XML                 =       new XmlDocument();
+        XmlDocument     Application_IN      =       new XmlDocument();
+        XmlDocument     APR                 =       new XmlDocument();
+        XmlDocument     APR_Corrected       =       new XmlDocument();
+        XmlDocument     REGUL_ModBus_TCP    =       new XmlDocument();
+        XmlDocument     REGUL_IEC_DATA      =       new XmlDocument();
+        XmlDocument     REGUL_IEC_CMD       =       new XmlDocument();
+        ArrayList       trig_list           =       new ArrayList();
+        string          path;
+        string          short_name_application;
+        string          short_name_apr;
 
         int          size_var (ArrayList list)
         {
@@ -1173,8 +1219,8 @@ namespace CITR
         }                       // Коррекция XML АПР
         private void Search_Iec104s(string name_XML, string name_IEC)
         {
-            FileStream file_descr = File.Open(path + "\\" + "fileDescription.txt", FileMode.Create);
-            StreamWriter output_file_descr = new StreamWriter(file_descr);
+            //FileStream file_descr = File.Open(path + "\\" + "fileDescription.txt", FileMode.Create);
+            //StreamWriter output_file_descr = new StreamWriter(file_descr);
             string[] map_description = null; 
             Correction_APR(name_IEC); //Отредактировали АПР под станционный МЭК104
             string sumname_XML;
@@ -1270,8 +1316,8 @@ namespace CITR
                                                 REGUL_IEC104_DATA_node_1.AppendChild(REGUL_IEC104_DATA_node_2);
                                                 int ID = Convert.ToInt32(SignalsStartID) + 1;
                                                 string IoAdr = REGUL_IEC104_DATA_node_2.Attributes["IoAdr"].Value;
-                                                string smal_buf = short_name_apr.Replace("USO", "").Replace(".xml", "") + " " + REGUL_IEC104_DATA_node_2.Attributes["IoAdr"].Value + " " + REGUL_IEC104_DATA_node_2.Attributes["Descr"].Value;
-                                                output_file_descr.WriteLine(smal_buf);
+                                                //string smal_buf = short_name_apr.Replace("USO", "").Replace(".xml", "") + " " + REGUL_IEC104_DATA_node_2.Attributes["IoAdr"].Value + " " + REGUL_IEC104_DATA_node_2.Attributes["Descr"].Value;
+                                                //output_file_descr.WriteLine(smal_buf);
                                                 int sIoAdr = Convert.ToInt32(IoAdr) + 1;
                                                 int count = 0;
                                                 foreach (XmlElement proverka_MAPPING3 in proverka_MAPPING)                   // Поиск каналов по выборке
@@ -1287,8 +1333,8 @@ namespace CITR
                                                         REGUL_IEC104_DATA_node_3.Attributes["MapVarName"].Value = proverka_MAPPING3.ChildNodes.Item(nuber_items - 1).InnerText;
                                                         ID++;
                                                         REGUL_IEC104_DATA_node_3.Attributes["IoAdr"].Value = sIoAdr.ToString();
-                                                        smal_buf = short_name_apr.Replace("USO","").Replace(".xml","") + " " + sIoAdr.ToString() + " " + REGUL_IEC104_DATA_node_3.Attributes["Descr"].Value;
-                                                        output_file_descr.WriteLine(smal_buf);
+                                                        //smal_buf = short_name_apr.Replace("USO","").Replace(".xml","") + " " + sIoAdr.ToString() + " " + REGUL_IEC104_DATA_node_3.Attributes["Descr"].Value;
+                                                        //output_file_descr.WriteLine(smal_buf);
                                                         sIoAdr++;                                                
                                                         
                                                         if (count != length)                                                      
@@ -1363,8 +1409,8 @@ namespace CITR
                                                 REGUL_IEC104_CMD_node_1.AppendChild(REGUL_IEC104_CMD_node_2);
                                                 int ID = Convert.ToInt32(SignalsStartID) + 1;
                                                 string IoAdr = REGUL_IEC104_CMD_node_2.Attributes["IoAdr"].Value;
-                                                string smal_buf = short_name_apr.Replace("USO", "").Replace(".xml", "") + " " + REGUL_IEC104_CMD_node_2.Attributes["IoAdr"].Value + " " + REGUL_IEC104_CMD_node_2.Attributes["Descr"].Value;
-                                                output_file_descr.WriteLine(smal_buf);
+                                                //string smal_buf = short_name_apr.Replace("USO", "").Replace(".xml", "") + " " + REGUL_IEC104_CMD_node_2.Attributes["IoAdr"].Value + " " + REGUL_IEC104_CMD_node_2.Attributes["Descr"].Value;
+                                                //output_file_descr.WriteLine(smal_buf);
                                                 int sIoAdr = Convert.ToInt32(IoAdr) + 1;
                                                 int count = 0;
                                                 foreach (XmlElement proverka_MAPPING3 in proverka_MAPPING)                   // Поиск каналов по выборке
@@ -1380,8 +1426,8 @@ namespace CITR
                                                         REGUL_IEC104_CMD_node_3.Attributes["MapVarName"].Value = proverka_MAPPING3.ChildNodes.Item(nuber_items - 1).InnerText;
                                                         ID++;
                                                         REGUL_IEC104_CMD_node_3.Attributes["IoAdr"].Value = sIoAdr.ToString();
-                                                        smal_buf = short_name_apr.Replace("USO", "").Replace(".xml", "") + " " + sIoAdr.ToString() + " " + REGUL_IEC104_CMD_node_3.Attributes["Descr"].Value;
-                                                        output_file_descr.WriteLine(smal_buf);
+                                                        //smal_buf = short_name_apr.Replace("USO", "").Replace(".xml", "") + " " + sIoAdr.ToString() + " " + REGUL_IEC104_CMD_node_3.Attributes["Descr"].Value;
+                                                        //output_file_descr.WriteLine(smal_buf);
                                                         sIoAdr++;
                                                         if (count != length)
                                                             REGUL_IEC104_CMD_node_1.AppendChild(REGUL_IEC104_CMD_node_3);
@@ -1400,7 +1446,7 @@ namespace CITR
             }
             REGUL_IEC_CMD.AppendChild(REGUL_IEC104_CMD_node_1);
             REGUL_IEC_DATA.AppendChild(REGUL_IEC104_DATA_node_1);
-            output_file_descr.Close();
+            //output_file_descr.Close();
             if (REGUL_IEC_DATA.FirstChild.FirstChild == null) REGUL_IEC_DATA.RemoveAll();
             if (REGUL_IEC_CMD.FirstChild.FirstChild == null) REGUL_IEC_CMD.RemoveAll();
             if (REGUL_IEC_DATA.FirstChild != null)
@@ -1707,89 +1753,100 @@ namespace CITR
             if (array_string != null)
             {
                 for (int i = 0; i < array_string.Length; i++)
+                {
+                    if (array_string[i].Contains(",7050,") && !array_string[i].Contains("Address=\"0\""))
                     {
-                        if (array_string[i].Contains(",7050,") && !array_string[i].Contains("Address=\"0\""))
+                        string Station = "";
+                        string Address = "";
+                        string ProtocolType = "";
+                        string tag = "";
+                        string summa;
+                        string descr = "";
+                        string[] words = array_string[i].Split(',');
+                        tag = words[0] + ";";
+                        foreach (string proverka1 in words)
                         {
-                            string Station = "";
-                            string Address = "";
-                            string ProtocolType = "";
-                            string tag = "";
-                            string summa;
-                            string[] words = array_string[i].Split(',');
-                            tag = words[0] + ";";
-                            foreach (string proverka1 in words)
+                            string[] words2 = proverka1.Split(' ');
+                            foreach (string proverka2 in words2)
                             {
-                                string[] words2 = proverka1.Split(' ');
-                                foreach (string proverka2 in words2)
+                                if (proverka2.Contains("Station"))
                                 {
-                                    if (proverka2.Contains("Station"))
+                                    string[] words3 = proverka2.Split('"');
+                                    Station = words3[1] + ";";
+                                    if (!N_io_list.Contains(words3[1]))
                                     {
-                                        string[] words3 = proverka2.Split('"');
-                                        Station = words3[1] + ";";
-                                        if (!N_io_list.Contains(words3[1]))
-                                        {
-                                            N_io_list.Add(words3[1]);
-                                        }
-                                    }
-                                    if (proverka2.Contains("Address"))
-                                    {
-                                        string[] words3 = proverka2.Split('"');
-                                        Address = words3[1] + ";";
-                                    }
-                                    if (proverka2.Contains("ProtocolType"))
-                                    {
-                                        string[] words3 = proverka2.Split('"');
-                                        ProtocolType = words3[1] + ";";
+                                        N_io_list.Add(words3[1]);
                                     }
                                 }
+                                if (proverka2.Contains("Address"))
+                                {
+                                    string[] words3 = proverka2.Split('"');
+                                    Address = words3[1] + ";";
+                                }
+                                if (proverka2.Contains("ProtocolType"))
+                                {
+                                    string[] words3 = proverka2.Split('"');
+                                    ProtocolType = words3[1] + ";";
+                                }
                             }
-                            summa = Station + tag + Address + ProtocolType;
-                            io_list.Add(summa);
                         }
-                    }
-                for (int i = 0; i < N_io_list.Count; i++)
-                    {
-                        XmlNode IO_node_1, IO_node_2, IO_node_3, IO_node_4, IO_node_5, IO_node_6;
-                        XmlDocument IO = new XmlDocument();
-                        IO_node_1 = IO.CreateElement("root");
-                        IO_node_1.Attributes.Append(IO.CreateAttribute("format-version"));
-                        IO_node_1.Attributes["format-version"].Value = "0";
-                        IO_node_2 = IO.CreateElement("item");
-                        IO_node_2.Attributes.Append(IO.CreateAttribute("Binding"));
-                        IO_node_2.Attributes["Binding"].Value = "Introduced";
-                        IO_node_4 = IO.CreateElement("node-path");
-                        IO_node_5 = IO.CreateElement("address");
-                        IO_node_6 = IO.CreateElement("protocoltype");
-                        IO_node_2.AppendChild(IO_node_4);
-                        IO_node_2.AppendChild(IO_node_5);
-                        IO_node_2.AppendChild(IO_node_6);
-                        // Порядок Листа: (Номер УСО;Тег сигнала;Адрес сигнала;Протокольный тип;)
-                        for (int j = 0; j < io_list.Count; j++)
+                        summa = Station + tag + Address + ProtocolType;
+                        for (int j = i; j > 0; j--)
                         {
-                            string[] str = io_list[j].ToString().Split(';');
-                            if (N_io_list[i].ToString() == str[0])
+                            if (array_string[j].Contains(tag.Split(";")[0]) && array_string[j].Contains(",101,"))
                             {
-                                IO_node_3 = IO_node_2.Clone();
-                                IO_node_3.FirstChild.InnerText = str[1];
-                                IO_node_3.FirstChild.NextSibling.InnerText = str[2];
-                                IO_node_3.LastChild.InnerText = str[3];
-                                IO_node_1.AppendChild(IO_node_3);
+                                descr = array_string[j].Split(',')[array_string[j].Split(',').Length-1];
+                                break;
                             }
                         }
-                        IO.AppendChild(IO_node_1);
-                        name_XML = "\\IEC104_USO" + N_io_list[i].ToString() + ".xml";
-                        if (IO.FirstChild != null)
-                        {
-                            string sumname_XML = path + name_XML;
-                            IO.Save(sumname_XML);
-                        }
-                        else
-                        {
-                            if (checkBox_MBTCP.Checked)
-                                MessageBox.Show("Ошибка создания XML IO", "Ошибка файла", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                        if (IO != null) IO.RemoveAll();
+                        string smal_buf = Station + Address + descr;
+                        output_file_descr.WriteLine(smal_buf);
+                        io_list.Add(summa);
                     }
+                }
+                for (int i = 0; i < N_io_list.Count; i++)
+                {
+                    XmlNode IO_node_1, IO_node_2, IO_node_3, IO_node_4, IO_node_5, IO_node_6;
+                    XmlDocument IO = new XmlDocument();
+                    IO_node_1 = IO.CreateElement("root");
+                    IO_node_1.Attributes.Append(IO.CreateAttribute("format-version"));
+                    IO_node_1.Attributes["format-version"].Value = "0";
+                    IO_node_2 = IO.CreateElement("item");
+                    IO_node_2.Attributes.Append(IO.CreateAttribute("Binding"));
+                    IO_node_2.Attributes["Binding"].Value = "Introduced";
+                    IO_node_4 = IO.CreateElement("node-path");
+                    IO_node_5 = IO.CreateElement("address");
+                    IO_node_6 = IO.CreateElement("protocoltype");
+                    IO_node_2.AppendChild(IO_node_4);
+                    IO_node_2.AppendChild(IO_node_5);
+                    IO_node_2.AppendChild(IO_node_6);
+                    // Порядок Листа: (Номер УСО;Тег сигнала;Адрес сигнала;Протокольный тип;)
+                    for (int j = 0; j < io_list.Count; j++)
+                    {
+                        string[] str = io_list[j].ToString().Split(';');
+                        if (N_io_list[i].ToString() == str[0])
+                        {
+                            IO_node_3 = IO_node_2.Clone();
+                            IO_node_3.FirstChild.InnerText = str[1];
+                            IO_node_3.FirstChild.NextSibling.InnerText = str[2];
+                            IO_node_3.LastChild.InnerText = str[3];
+                            IO_node_1.AppendChild(IO_node_3);
+                        }
+                    }
+                    IO.AppendChild(IO_node_1);
+                    name_XML = "\\IEC104_USO" + N_io_list[i].ToString() + ".xml";
+                    if (IO.FirstChild != null)
+                    {
+                        string sumname_XML = path + name_XML;
+                        IO.Save(sumname_XML);
+                    }
+                    else
+                    {
+                        if (checkBox_MBTCP.Checked)
+                            MessageBox.Show("Ошибка создания XML IO", "Ошибка файла", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    if (IO != null) IO.RemoveAll();
+                }
             }
         }  // Генерация простанства имен карты адресов для ИО Alppha
         private void NU_Bilding(string[] array_string, string path)
@@ -1801,6 +1858,7 @@ namespace CITR
             ArrayList property_8830_arr = new ArrayList();
             ArrayList property_8836_arr = new ArrayList();
             ArrayList property_8914_arr = new ArrayList();
+            
 
             // Порядок Листа: (Номер УСО;Тег сигнала;Адрес сигнала;Протокольный тип;)
             if (array_string != null)
@@ -2418,9 +2476,14 @@ namespace CITR
 
                 if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
                 {
+                    
+                    file_descr = File.Open(folderBrowserDialog1.SelectedPath + "\\" + "fileDescription.txt", FileMode.Create);
+                    output_file_descr = new StreamWriter(file_descr);
+
                     foreach (string name in names)
                     {
-                        readText = File.ReadAllLines(name);
+                        Encoding win1251 = CodePagesEncodingProvider.Instance.GetEncoding(1251);
+                        readText = File.ReadAllLines(name, win1251);
                         if (readText != null)
                         {
                             if (checkBox_IO.Checked) IO_Bilding_1(readText, folderBrowserDialog1.SelectedPath);
@@ -2428,6 +2491,7 @@ namespace CITR
                             Calc_Point(readText, number_sum);
                         }
                     }
+                    output_file_descr.Close();
                     textBox_TS_sum.Text = number_sum[0].ToString();
                     textBox_TU_sum.Text = number_sum[1].ToString();
                     textBox_TR_sum.Text = number_sum[2].ToString();

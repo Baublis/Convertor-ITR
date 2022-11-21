@@ -10,8 +10,8 @@
     <Company>ITR</Company>
     <UserSecretsId>d19260d3-a4de-437d-b99f-69325d0e5271</UserSecretsId>
     <StartupObject></StartupObject>
-    <AssemblyVersion>2022.07.26.1</AssemblyVersion>
-    <FileVersion>2022.07.26.1</FileVersion>
+    <AssemblyVersion>2022.11.22.1</AssemblyVersion>
+    <FileVersion>2022.11.22.1</FileVersion>
     <UseWPF>True</UseWPF>
     <SignAssembly>false</SignAssembly>
     <Copyright>Баублис Д.В.</Copyright>
